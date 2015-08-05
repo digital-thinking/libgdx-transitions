@@ -1,0 +1,136 @@
+buildscript {
+	repositories { jcenter() }
+}
+
+ext {
+	libName = 'libgdx-transitions'
+	nameAppendix = project == rootProject ? '' : (project.parent != rootProject ? project.parent.nameAppendix + '-' : '') + project.name
+	nameFull = libName + (nameAppendix.empty ? '' : "-$nameAppendix")
+	libgdxVersion = '1.6.4'
+}
+
+group = 'com.ixpetion.libgdx-transitions'
+version = '0.0.1'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'announce'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+// java
+
+sourceCompatibility = 1.7
+
+sourceSets {
+	main {
+		java.srcDirs = ['src/main']
+		resources.srcDirs = ['src/main']
+	}
+	test.java.srcDirs = ['src/test']
+	site.resources.srcDirs = [javadoc.destinationDir.parentFile, testReportDir.parentFile]
+}
+
+jar {
+	baseName = libName
+	appendix = nameAppendix
+	manifest.attributes += [
+			'web': 'http://www.ixeption.de',
+			'license': 'Apache-2.0',
+			'group': project.group,
+			'artifact': nameFull,
+			'version': project.version,
+			'libGDX': libgdxVersion,
+			'java': targetCompatibility,
+			'timestamp': System.currentTimeMillis()
+	]
+}
+
+javadoc {
+	title = nameFull
+	File argFile = file("$rootProject.projectDir/gradle/javadoc-${System.getProperty('java.version').subSequence(0, 3)}-args")
+	if(!argFile.exists())
+		argFile = file("$rootProject.projectDir/gradle/javadoc-args")
+	options.optionFiles argFile
+}
+
+// distribution
+
+task distSources(type: Jar, group: 'distribution') {
+	description = 'Assembles a jar archive containing the main sources and resources.'
+	from sourceSets.main.java
+	from sourceSets.main.resources
+	baseName = libName
+	appendix = nameAppendix
+	classifier = 'sources'
+	destinationDir = jar.destinationDir
+	manifest = jar.manifest
+} << { announce.local.send "$nameFull $version", 'Distributed sources' }
+
+task distJavadoc(type: Jar, dependsOn: javadoc, group: 'distribution') {
+	description = 'Assembles a jar archive containing the javadoc.'
+	from javadoc.destinationDir
+	baseName = libName
+	appendix = nameAppendix
+	classifier = 'javadoc'
+	destinationDir = jar.destinationDir
+	manifest = jar.manifest
+} << { announce.local.send "$nameFull $version", 'Distributed javadoc' }
+
+task distBundle(type: Zip, dependsOn: [jar, distSources, distJavadoc], group: 'distribution') {
+	description = 'Assembles a zip archive containing the binary, source and javadoc archives as well as the LICENSE file.'
+	from jar.archivePath
+	from distSources.archivePath
+	from distJavadoc.archivePath
+	from "$rootDir/LICENSE"
+	baseName = libName
+	appendix = nameAppendix
+	destinationDir = jar.destinationDir
+} << { announce.local.send "$nameFull $version", 'Distributed bundle' }
+
+// upload
+
+artifacts {
+	archives distSources, distJavadoc
+}
+
+// IDE integration
+
+eclipse {
+	project.name = nameFull
+	classpath {
+		sourceSets -= sourceSets.site
+		containers = ["org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-$targetCompatibility"]
+	}
+}
+
+task fixNewlines(description: 'makes sure all text files end with \\n') << {
+	int count = 0
+	fileTree(rootProject.projectDir).visit {
+		if(!it.file.isDirectory()) {
+			String mime = java.nio.file.Files.probeContentType(java.nio.file.Paths.get(it.file.path))
+			if((mime.startsWith('text/') ||	mime.equals('application/xml')) && !it.file.text.endsWith('\n')) {
+				it.file.text += '\n'
+				count++
+			}
+		}
+	}
+	if(count > 0)
+		announce.local.send nameFull, "added newline to $count ${count == 1 ? 'file' : 'files'}"
+}
+
+defaultTasks 'fixNewlines'
+
+// methods
+
+Object property(String property) {
+	return hasProperty(property) ? project[property] : ''
+}
