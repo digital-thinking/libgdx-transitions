@@ -138,9 +138,7 @@ public class FadingGame extends Game {
 	 * @param screen may be {@code null} */
 	@Override
 	public void setScreen (Screen screen) {
-		if (transitionRunning) Gdx.app.log(FadingGame.class.getSimpleName(), "Changed Screen while transition in progress");
-		screen.show();
-		screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		if (transitionRunning) Gdx.app.log(FadingGame.class.getSimpleName(), "Changed Screen while transition in progress");	
 		if (this.screen == null) {
 			this.screen = screen;
 		} else {
@@ -157,6 +155,8 @@ public class FadingGame extends Game {
 			}
 
 		}
+		this.screen.show();
+		this.screen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 	}
 
