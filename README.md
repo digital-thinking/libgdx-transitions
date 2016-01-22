@@ -6,7 +6,7 @@ This library uses framebuffers for screen transitions in libgdx  like, alpha-fad
 Installation
 ------------
 1. Make libGDX running on your system
-2. Download  the [jar](https://github.com/iXeption/libgdx-transitions/releases/download/release/libgdx-transitions-1.0.1.jar)
+2. Download  the [jar](https://github.com/iXeption/libgdx-transitions/releases/latest)
 3. Add gradle dependency
 
 Or just use the source.
