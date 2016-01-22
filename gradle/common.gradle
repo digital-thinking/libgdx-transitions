@@ -10,7 +10,7 @@ ext {
 }
 
 group = 'com.ixpetion.libgdx-transitions'
-version = '0.0.1'
+version = '1.0.2'
 
 apply plugin: 'java'
 apply plugin: 'maven'
