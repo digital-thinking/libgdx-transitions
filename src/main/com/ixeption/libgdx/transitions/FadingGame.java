@@ -92,6 +92,7 @@ public class FadingGame extends Game {
                 transitionRunning = false;
                 this.nextScreen = null;
                 notifyFinished();
+                this.screen.render(delta);
 
             } else {
                 // transition is active
