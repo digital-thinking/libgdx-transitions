@@ -56,9 +56,6 @@ public class ColorFadeTransition implements ScreenTransition {
 
 		if (interpolation != null) percent = interpolation.apply(percent);
 
-		Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		batch.begin();
 
 		float fade = percent * 2;

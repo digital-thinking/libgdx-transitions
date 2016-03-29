@@ -6,7 +6,7 @@ ext {
 	libName = 'libgdx-transitions'
 	nameAppendix = project == rootProject ? '' : (project.parent != rootProject ? project.parent.nameAppendix + '-' : '') + project.name
 	nameFull = libName + (nameAppendix.empty ? '' : "-$nameAppendix")
-	libgdxVersion = '1.6.4'
+	libgdxVersion = '1.9.2'
 }
 
 group = 'com.ixpetion.libgdx-transitions'

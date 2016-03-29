@@ -73,8 +73,6 @@ public class SlidingTransition implements ScreenTransition {
 		Texture texBottom = slideOut ? nextScreenTexture : currentScreenTexture;
 		Texture texTop = slideOut ? currentScreenTexture : nextScreenTexture;
 
-		Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		batch.draw(texBottom, 0, 0, 0, 0, width, height, 1, 1, 0, 0, 0, (int)width, (int)height, false, true);
 		batch.draw(texTop, x, y, 0, 0, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(), 1, 1, 0, 0, 0,

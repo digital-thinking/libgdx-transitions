@@ -69,9 +69,6 @@ public class RotatingTransition implements ScreenTransition {
 		float rotation = 1;
 		if (interpolation != null) rotation = interpolation.apply(percent);
 
-		Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		batch.begin();
 		batch.draw(currentScreenTexture, 0, 0, width / 2, height / 2, width, height, 1, 1, 0, 0, 0, (int)width, (int)height, false,
 			true);
