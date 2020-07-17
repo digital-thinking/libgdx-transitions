@@ -40,6 +40,7 @@ public class FadingGame extends Game {
     private float transitionDuration;
     private float currentTransitionTime;
     private boolean transitionRunning;
+    private boolean transitionStart;
     private ScreenTransition screenTransition;
 
     public FadingGame(Batch batch) {
@@ -97,6 +98,11 @@ public class FadingGame extends Game {
             } else {
                 // transition is active
                 if (screenTransition != null) {
+                    if(transitionStart) {
+                        transitionStart = false;
+                        currentScreenFBO = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                        nextScreenFBO = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                    }
                     currentScreenFBO.begin();
                     this.screen.render(delta);
                     currentScreenFBO.end();
